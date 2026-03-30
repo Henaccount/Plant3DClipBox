@@ -17,7 +17,7 @@ It is strongly recommended that this code be thoroughly reviewed, tested, and au
 
 The authors disclaim any liability for damages or issues arising from the use of this code.</i></td></tr></table>
 
-<img src=P3DClipbox.png>
+<img src=P3DClipbox.png with=400>
 
 ## Included features
 
