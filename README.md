@@ -1,6 +1,21 @@
 # Plant3DClipBox
 
-Concrete C# source bundle for a Plant 3D / AutoCAD 3D clip-box tool.
+Sample Code, use at own risk: Concrete C# source bundle for a Plant 3D / AutoCAD 3D clip-box tool.
+
+<table border=1><tr><td><i>Disclaimer – AI-Generated Code
+
+This code was generated in whole or in part using artificial intelligence tools. While efforts have been made to review and validate the output, AI-generated code may contain errors, omissions, or unintended behavior.
+
+Users of this code should be aware that:
+
+The code may not follow best practices for security, performance, or reliability.
+Vulnerabilities may be present, including but not limited to injection flaws, insecure dependencies, or improper handling of data.
+The code may be susceptible to issues arising from prompt manipulation (e.g., prompt injection) or unintended generation of unsafe logic.
+No guarantees are made regarding correctness, completeness, or fitness for a particular purpose.
+
+It is strongly recommended that this code be thoroughly reviewed, tested, and audited—especially before use in production or security-sensitive environments.
+
+The authors disclaim any liability for damages or issues arising from the use of this code.</i></td></tr></table>
 
 ## Included features
 
