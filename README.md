@@ -36,10 +36,6 @@ The authors disclaim any liability for damages or issues arising from the use of
 ## Commands
 
 - `P3DCLIPBOX` - show the palette
-- `P3DCLIPBOXFIT` - fit the box to the current pickfirst selection, or prompt for selection when run from the command line
-- `P3DCLIPBOXON` - enable clipping
-- `P3DCLIPBOXOFF` - disable clipping
-- `P3DCLIPBOXREFRESH` - refresh the palette state
 
 ## Project files
 
