@@ -78,7 +78,16 @@ When `-` is checked, all delta fields are normalized to negative values. When it
 
 ### Save / load storage
 
-Named box states are stored in the drawing Named Objects Dictionary under `P3D_CLIPBOX_STATES`.
+Named box states are stored in a shared user-profile XML store under the Autodesk application-data tree, so the same saved boxes are available from all drawings. For backward compatibility, older per-DWG states stored in the drawing Named Objects Dictionary under `P3D_CLIPBOX_STATES` are migrated into the shared store when encountered.
+
+### Project reference check (`chk.ref`)
+
+When a clip box is present, the `chk.ref` button checks whether the current drawing belongs to a Plant 3D project. If it does, the tool reads the Plant 3D drawing list from the active Plant project and scans those DWGs against the current clip box. For local projects, the drawing-path resolver now handles both absolute and project-relative Plant 3D folder paths, so drawings listed in Project Manager can still be found when the project uses relative paths. In Collaboration projects, the tool first checks whether all DWG files listed under Plant 3D Drawings in Project Manager are present in the local cache. If some are missing, you can cancel and download the missing files first, or continue with the cached files only.
+
+The available candidate drawings are scanned against the current clip box through a hybrid path. If a project drawing is already open in Plant 3D, the tool scans that live database directly so an open drawing does not become a false candidate just because the file is locked for side-database reading. Otherwise the drawing is opened as a side database. A fast pass uses the DWG header model extents only as an early reject, then the drawing's own model-space entities are checked by extents. External-reference inserts inside those databases are excluded from that entity scan, and the tool's own clip-box helper block references on layer `P3D_CLIPBOX` are excluded as well, so a candidate drawing is judged by its own native model contents rather than by xrefs or leftover clip boxes it happens to contain. Conservative proposal is now limited to the case where no measurable local entity extents are available at all, which avoids false positives from stray unsupported helper entities when the measurable model contents are clearly far away.
+
+The results window lists the missing Plant 3D project drawings that are likely relevant but are not already attached as xrefs. You can select all or individual rows and attach the chosen drawings as overlay xrefs at `0,0,0` using a relative path from the current host drawing. If clip-box clipping is already on, the tool reapplies clipping after loading so the newly added xrefs are clipped immediately.
+
 
 ### Clipping implementation
 
