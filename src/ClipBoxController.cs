@@ -369,6 +369,53 @@ internal sealed class ClipBoxController
         }
     }
 
+    public void CheckProjectReferences()
+    {
+        var document = GetActiveDocument();
+        if (document is null)
+        {
+            return;
+        }
+
+        var editor = document.Editor;
+        var state = GetState(document);
+
+        try
+        {
+            if (!TryGetCurrentBox(document, out var box))
+            {
+                WriteMessage(editor, "No clip box found. Fit a selection first.");
+                return;
+            }
+
+            var result = ProjectRefCheckService.RunInteractive(document, box);
+            if (!string.IsNullOrWhiteSpace(result.Message))
+            {
+                WriteMessage(editor, result.Message);
+            }
+
+            if (result.ChangedDrawing)
+            {
+                if (state.ClippingEnabled)
+                {
+                    ApplyClipping(document, state, box);
+                }
+                else
+                {
+                    RequestScreenUpdate(document);
+                }
+            }
+        }
+        catch (System.Exception ex)
+        {
+            WriteMessage(editor, $"chk.ref failed: {ex.Message}");
+        }
+        finally
+        {
+            RaiseStateChanged();
+        }
+    }
+
     private void UpdateCurrentBox(
         Func<OrientedBox, OrientedBox> updater,
         string noBoxMessage,

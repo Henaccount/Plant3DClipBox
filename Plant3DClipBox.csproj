@@ -14,7 +14,7 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <AutoCADSdkDir Condition="'$(AutoCADSdkDir)' == ''">C:\Users\baby\Documents\ObjectARX 2026\inc</AutoCADSdkDir>
+    <AutoCADSdkDir Condition="'$(AutoCADSdkDir)' == ''">C:\Users\bussm\OneDrive - Autodesk\Documents\ObjectARX 2026\inc</AutoCADSdkDir>
   </PropertyGroup>
 
   <ItemGroup>

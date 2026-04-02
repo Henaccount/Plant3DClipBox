@@ -18,6 +18,7 @@ internal sealed class ClipBoxControl : UserControl
     private readonly NumericUpDown _numY;
     private readonly NumericUpDown _numZ;
     private readonly NumericUpDown _numAll;
+    private readonly Button _btnCheckRefs;
     private readonly List<NumericUpDown> _deltaInputs = new();
     private readonly List<Button> _moveButtons = new();
     private readonly List<Button> _resizeOnlyButtons = new();
@@ -61,8 +62,12 @@ internal sealed class ClipBoxControl : UserControl
         };
 
         var btnFit = CreateButton("Fit selection", (_, _) => Execute(() => _controller.FitSelection(promptIfNeeded: false)));
+        _btnCheckRefs = CreateButton("chk.ref", (_, _) => Execute(() => _controller.CheckProjectReferences()));
+        _btnCheckRefs.AutoSize = true;
+        _toolTip.SetToolTip(_btnCheckRefs, "Plant 3D projects only. Scan the current project's Plant 3D drawings around the current clip box and offer missing intersecting DWGs for loading as overlay xrefs. In Collaboration projects, chk.ref first checks whether all listed drawings are available in the local cache.");
         var btnRefresh = CreateButton("Refresh", (_, _) => RefreshFromController());
         buttonPanel.Controls.Add(btnFit);
+        buttonPanel.Controls.Add(_btnCheckRefs);
         buttonPanel.Controls.Add(btnRefresh);
         root.Controls.Add(buttonPanel, 0, 0);
 
@@ -161,9 +166,9 @@ internal sealed class ClipBoxControl : UserControl
         };
         resizeTable.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 58F));
         resizeTable.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 150F));
-        resizeTable.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 58F));//58
-        resizeTable.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 74F));//74
-        resizeTable.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 58F));//58
+        resizeTable.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 58F));
+        resizeTable.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 74F));
+        resizeTable.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 58F));
 
         _numX = CreateDeltaControl();
         _numY = CreateDeltaControl();
@@ -232,7 +237,7 @@ internal sealed class ClipBoxControl : UserControl
         {
             AutoSize = true,
             MaximumSize = new Size(440, 0),
-            Text = "Turn clipping off and use native MOVE, 3DROTATE, or SCALE on the visible box to change its position or orientation. With move mode on, the highlighted outer X/Y/Z buttons shift the box along its local axes.",
+            Text = "Turn clipping off and use native MOVE, 3DROTATE, or SCALE on the visible box to change its position or orientation. With move mode on, the highlighted outer X/Y/Z buttons shift the box along its local axes. In Plant 3D projects, use chk.ref to scan Plant 3D project drawings around the current clip box and offer missing xrefs for loading.",
             Margin = new Padding(0, 0, 0, 6),
         };
         root.Controls.Add(hint, 0, 6);
@@ -268,6 +273,7 @@ internal sealed class ClipBoxControl : UserControl
 
             _chkClipping.Checked = clippingOn;
             _chkClipping.Enabled = hasBox;
+            _btnCheckRefs.Enabled = hasBox;
             _lblSummary.Text = _controller.GetCurrentSummary();
             _lblStatus.Text = BuildStatusText(hasBox, clippingOn);
             _toolTip.SetToolTip(_lblSummary, _lblSummary.Text);
@@ -432,7 +438,7 @@ internal sealed class ClipBoxControl : UserControl
     {
         if (!hasBox)
         {
-            return "Create a box with Fit selection, then resize, move, or save it.";
+            return "Create a box with Fit selection, then resize, move, save it, or run chk.ref. The chk.ref scan needs a current box to know which Plant 3D project drawings to check.";
         }
 
         var movementText = _chkMove.Checked
@@ -443,7 +449,9 @@ internal sealed class ClipBoxControl : UserControl
             ? "Clipping is on. Native entities outside the box are hidden, and xrefs are clipped to the clip-box volume."
             : "Clipping is off. The box is visible and can be moved, rotated, or scaled with native commands.";
 
-        return clippingText + Environment.NewLine + movementText;
+        var chkRefText = "In Plant 3D projects, chk.ref scans the Plant 3D drawings from the current project, checks which DWGs intersect the clip box, and offers the missing ones for loading as overlay xrefs. In Collaboration projects, the tool first checks whether all listed Plant 3D drawings are available in the local cache.";
+
+        return clippingText + Environment.NewLine + movementText + Environment.NewLine + chkRefText;
     }
 
     private static NumericUpDown CreateDeltaControl()
